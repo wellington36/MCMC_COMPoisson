@@ -7,7 +7,7 @@ _Image for illustrative purposes only, results NOT guaranteed._
 
 ### Sum-to-threshol appoach
 
-![image](https://github.com/user-attachments/assets/aa86b0fd-3874-4851-8318-6599938c2bd7)
+![image](https://github.com/user-attachments/assets/7ba36ad0-fae2-45a9-9702-6149a68d0e89)
 
 ### Bounding pairs approach
 (in progress...)
