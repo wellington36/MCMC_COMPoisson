@@ -7,7 +7,7 @@ _Image for illustrative purposes only, results NOT guaranteed._
 
 ### Sum-to-threshol appoach
 
-![image](https://github.com/user-attachments/assets/7ba36ad0-fae2-45a9-9702-6149a68d0e89)
+![image](https://github.com/user-attachments/assets/af822004-067c-4564-9c60-75335c5abc36)
 
 ### Bounding pairs approach
 
@@ -15,10 +15,8 @@ _Image for illustrative purposes only, results NOT guaranteed._
 
 ### Fixed 100 terms
 
-![image](https://github.com/user-attachments/assets/ac99cc72-ec8f-4fc8-907f-c818cc3887f8)
-
+![image](https://github.com/user-attachments/assets/5831a97c-957d-4543-aa9b-153a925ba43d)
 
 ### Fixed 3300 terms
 
-![image](https://github.com/user-attachments/assets/a2f48fbb-d26f-413d-b6f9-467fae9044cb)
-
+![image](https://github.com/user-attachments/assets/6afeeb58-dee2-4d18-aabc-691f8d93c366)
