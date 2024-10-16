@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 iterations = 500
-FIXED = 3300
+eps = 2**(-52)
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -28,7 +28,8 @@ stan_data <- list(
   N = length(counts),
   y = counts,
   freq = frequencies,
-  FIXED = FIXED
+  eps = eps,
+  MAX_ITERS = 10**6
 )
 
 # Compile the Stan model
@@ -46,9 +47,9 @@ fit <- sampling(
 )
 
 # Print a summary of the results
-print(fit, pars = c("mu", "nu"))
+print(fit, pars = c("mu", "nu", "n"))
 
-summary_fit <- summary(fit, pars = c("mu", "nu"))
+summary_fit <- summary(fit, pars = c("mu", "nu", "n"))
 
 # Convert the summary output to a data frame
 posterior_stats <- as.data.frame(summary_fit$summary)
@@ -67,7 +68,7 @@ ess_per_minute <- posterior_stats$n_eff / avg_time_min
 
 # Create a summary table for mu and nu
 summary_table <- data.frame(
-  Parameter = c("mu", "nu"),
+  Parameter = c("mu", "nu", "n"),
   Mean = posterior_stats$mean,
   Median = posterior_stats$`50%`,
   `95% BCI` = paste0("[", round(posterior_stats$`2.5%`, 3), ", ", round(posterior_stats$`97.5%`, 3), "]"),
