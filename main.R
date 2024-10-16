@@ -35,7 +35,7 @@ stan_data <- list(
 )
 
 # Compile the Stan model
-stan_model <- stan_model(file = "compoisson_model_mu_nu.stan")
+stan_model <- stan_model(file = "compoisson_bounding.stan")
 
 # Fit the model using MCMC
 fit <- sampling(
@@ -45,7 +45,7 @@ fit <- sampling(
   warmup = 200,          # Number of warmup (burn-in) iterations
   chains = 4,             # Number of chains
   seed = 123,             # Seed for reproducibility
-  control = list(adapt_delta = 0.95, max_treedepth = 15)  # Control parameters
+  control = list(adapt_delta = 0.90, max_treedepth = 15)  # Control parameters
 )
 
 # Print a summary of the results
@@ -79,3 +79,33 @@ ggplot(plot_data, aes(x = count)) +
     plot.title = element_text(hjust = 0.5),
     legend.position = "top"
   )
+
+# Extract posterior samples for mu and nu
+posterior_samples <- as.data.frame(rstan::extract(fit, pars = c("mu", "nu")))
+
+# Calculate the 90% credible intervals (10th and 90th percentiles)
+mu_ci_90 <- quantile(posterior_samples$mu, probs = c(0.10, 0.90))
+nu_ci_90 <- quantile(posterior_samples$nu, probs = c(0.10, 0.90))
+
+# Add the calculated 90% BCI to the summary table
+summary_table <- data.frame(
+  Parameter = c("mu", "nu"),
+  Mean = posterior_stats$mean,
+  Median = posterior_stats$`50%`,
+  `90% BCI` = c(paste0("[", round(mu_ci_90[1], 3), ", ", round(mu_ci_90[2], 3), "]"),
+                paste0("[", round(nu_ci_90[1], 3), ", ", round(nu_ci_90[2], 3), "]")),
+  `Posterior SD` = posterior_stats$sd,
+  MCSE = posterior_stats$se_mean,
+  `ESS/minute` = posterior_stats$n_eff
+)
+
+# Display the summary table
+print(summary_table)
+
+# Optional: Format the table for display
+library(knitr)
+library(kableExtra)
+
+summary_table %>%
+  kable("html", col.names = c("Parameter", "Mean", "Median", "90% BCI", "Posterior SD", "MCSE", "ESS/minute")) %>%
+  kable_styling(full_width = F, bootstrap_options = c("striped", "hover"))
