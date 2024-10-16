@@ -1,10 +1,9 @@
-# Load necessary libraries
 library(rstan)
 library(readr)
 library(dplyr)
 library(ggplot2)
 
-iterations = 500
+iterations = 5000
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -17,11 +16,9 @@ data_df <- read_csv("Shmuelli_2005.csv")
 print(data_df)
 
 # Prepare data for Stan
-# Ensure counts are sorted
 data_df <- data_df %>%
   arrange(count)
 
-# Extract counts and frequencies
 counts <- data_df$count
 frequencies <- data_df$frequency
 
@@ -30,7 +27,7 @@ stan_data <- list(
   N = length(counts),
   y = counts,
   freq = frequencies,
-  ITER = 100
+  FIXED = 3300
 )
 
 # Compile the Stan model
@@ -43,7 +40,6 @@ fit <- sampling(
   iter = iterations,               # Number of iterations
   warmup = floor(iterations/2),    # Number of warmup (burn-in) iterations
   chains = 4,                      # Number of chains
-  seed = 123,                      # Seed for reproducibility
   control = list(adapt_delta = 0.90, max_treedepth = 12)  # Control parameters
 )
 
@@ -55,30 +51,27 @@ summary_fit <- summary(fit, pars = c("mu", "nu"))
 # Convert the summary output to a data frame
 posterior_stats <- as.data.frame(summary_fit$summary)
 
-# Print the column names to identify the correct columns
-print(colnames(posterior_stats))
+# Get elapsed time for each chain
+chain_times <- get_elapsed_time(fit)
 
-# Subset the rows for mu and nu
-posterior_mu_nu <- posterior_stats[c("mu", "nu"), ]
+# Calculate the average time in minutes across all chains
+avg_time_min <- mean(rowSums(chain_times)) / 60
 
-# Check if the correct column for ESS exists, adjust column names accordingly
-if ("ess_bulk" %in% colnames(posterior_mu_nu)) {
-  ess_column <- "ess_bulk"
-} else if ("n_eff" %in% colnames(posterior_mu_nu)) {
-  ess_column <- "n_eff"
-} else {
-  stop("Effective sample size (ESS) column not found.")
-}
+# Check the column for effective sample size (ESS)
+ess_column <- "n_eff"  # n_eff was identified earlier
+
+# Calculate ESS/minute by dividing n_eff by the average time in minutes
+ess_per_minute <- posterior_stats$n_eff / avg_time_min
 
 # Create a summary table for mu and nu
 summary_table <- data.frame(
   Parameter = c("mu", "nu"),
   Mean = posterior_stats$mean,
   Median = posterior_stats$`50%`,
-  `95% BCI` = paste0("[", round(posterior_mu_nu$`2.5%`, 3), ", ", round(posterior_mu_nu$`97.5%`, 3), "]"),
+  `95% BCI` = paste0("[", round(posterior_stats$`2.5%`, 3), ", ", round(posterior_stats$`97.5%`, 3), "]"),
   `Posterior SD` = posterior_stats$sd,
   MCSE = posterior_stats$se_mean,
-  `ESS/minute` = posterior_stats$n_eff
+  `ESS/minute` = ess_per_minute
 )
 
 # Display the summary table
@@ -89,5 +82,5 @@ library(knitr)
 library(kableExtra)
 
 summary_table %>%
-  kable("html", col.names = c("Parameter", "Mean", "Median", "90% BCI", "Posterior SD", "MCSE", "ESS/minute")) %>%
+  kable("html", col.names = c("Parameter", "Mean", "Median", "95% BCI", "Posterior SD", "MCSE", "ESS/minute")) %>%
   kable_styling(full_width = F, bootstrap_options = c("striped", "hover"))
