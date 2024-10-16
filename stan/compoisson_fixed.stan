@@ -19,7 +19,7 @@ transformed parameters {
   // Compute normalization constant Z
   for (i in 1:FIXED) {
     // Compute (mu^n / n!)^nu
-    Z_terms[i] = i * loglamb - nu * lgamma(i + 1);
+    Z_terms[i] = (i-1) * loglamb - nu * lgamma(i);
   }
   
   logZ = log_sum_exp(Z_terms);

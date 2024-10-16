@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 iterations = 500
-FIXED = 3300
+FIXED = 100
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
