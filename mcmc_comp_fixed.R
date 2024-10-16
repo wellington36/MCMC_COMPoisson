@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 iterations = 500
-FIXED = 100
+FIXED = 3300
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -32,7 +32,7 @@ stan_data <- list(
 )
 
 # Compile the Stan model
-stan_model <- stan_model(file = "compoisson_fixed.stan")
+stan_model <- stan_model(file = "stan/compoisson_fixed.stan")
 
 # Fit the model using MCMC
 fit <- sampling(
@@ -40,7 +40,7 @@ fit <- sampling(
   data = stan_data,
   refresh = floor(iterations/5),
   iter = iterations,               # Number of iterations
-  warmup = floor(iterations/2),    # Number of warmup (burn-in) iterations
+  warmup = floor(iterations*0.8),    # Number of warmup (burn-in) iterations
   chains = 4,                      # Number of chains
   control = list(adapt_delta = 0.90, max_treedepth = 12)  # Control parameters
 )

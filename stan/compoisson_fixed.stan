@@ -28,8 +28,9 @@ transformed parameters {
 model {
   vector[N] log_p;          // Log probabilities for each count
   // Priors (adjust these based on your knowledge)
-  mu ~ gamma(0.1, 0.1);            // Prior for mu
-  nu ~ gamma(0.0625, 0.25);        // Prior for nu
+  mu ~ gamma(0.01, 0.01);            // Prior for mu
+  //nu ~ gamma(0.0625, 0.25);        // Prior for nu
+  nu ~ normal(0, 1);               // Prior for nu
   
   // Compute log probabilities
   for (i in 1:N) {
