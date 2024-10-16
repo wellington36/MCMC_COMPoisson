@@ -3,4 +3,4 @@
 .RData
 .Ruserdata
 
-compoisson_model_mu_nu.rds
+compoisson_fixed.rds

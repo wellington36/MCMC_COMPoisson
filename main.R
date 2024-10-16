@@ -4,6 +4,8 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 
+iterations = 500
+
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
@@ -23,77 +25,57 @@ data_df <- data_df %>%
 counts <- data_df$count
 frequencies <- data_df$frequency
 
-# Define maximum y for normalization (ensure it's sufficiently large)
-Z_max <- max(counts) + 20  # Adjust as needed
-
 # Prepare the list of data for Stan
 stan_data <- list(
   N = length(counts),
   y = counts,
   freq = frequencies,
-  Z_max = Z_max
+  ITER = 100
 )
 
 # Compile the Stan model
-stan_model <- stan_model(file = "compoisson_bounding.stan")
+stan_model <- stan_model(file = "compoisson_fixed.stan")
 
 # Fit the model using MCMC
 fit <- sampling(
   object = stan_model,
   data = stan_data,
-  iter = 500,            # Number of iterations
-  warmup = 200,          # Number of warmup (burn-in) iterations
-  chains = 4,             # Number of chains
-  seed = 123,             # Seed for reproducibility
-  control = list(adapt_delta = 0.90, max_treedepth = 15)  # Control parameters
+  iter = iterations,               # Number of iterations
+  warmup = floor(iterations/2),    # Number of warmup (burn-in) iterations
+  chains = 4,                      # Number of chains
+  seed = 123,                      # Seed for reproducibility
+  control = list(adapt_delta = 0.90, max_treedepth = 12)  # Control parameters
 )
 
 # Print a summary of the results
 print(fit, pars = c("mu", "nu"))
 
-# Extract generated quantities (predicted frequencies)
-generated_freq <- extract(fit)$freq_rep
+summary_fit <- summary(fit, pars = c("mu", "nu"))
 
-# Get the mean predicted frequency for each count
-replicated <- apply(generated_freq, 2, mean)
+# Convert the summary output to a data frame
+posterior_stats <- as.data.frame(summary_fit$summary)
 
-# Create a data frame for the plot
-plot_data <- data.frame(
-  count = counts,
-  observed = frequencies,
-  predicted = replicated
-)
+# Print the column names to identify the correct columns
+print(colnames(posterior_stats))
 
-# Plot the observed data (bars) and predicted data (line)
-ggplot(plot_data, aes(x = count)) +
-  geom_bar(aes(y = observed), stat = "identity", fill = "blue", alpha = 0.6, width = 0.8) +  # Bars for observed
-  geom_line(aes(y = predicted), color = "red", size = 1.2) +                                # Line for predicted
-  geom_point(aes(y = predicted), color = "red", size = 2) +                                 # Points for predicted
-  labs(
-    title = "Observed vs. Predicted Frequencies",
-    x = "Count",
-    y = "Frequency"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    legend.position = "top"
-  )
+# Subset the rows for mu and nu
+posterior_mu_nu <- posterior_stats[c("mu", "nu"), ]
 
-# Extract posterior samples for mu and nu
-posterior_samples <- as.data.frame(rstan::extract(fit, pars = c("mu", "nu")))
+# Check if the correct column for ESS exists, adjust column names accordingly
+if ("ess_bulk" %in% colnames(posterior_mu_nu)) {
+  ess_column <- "ess_bulk"
+} else if ("n_eff" %in% colnames(posterior_mu_nu)) {
+  ess_column <- "n_eff"
+} else {
+  stop("Effective sample size (ESS) column not found.")
+}
 
-# Calculate the 90% credible intervals (10th and 90th percentiles)
-mu_ci_90 <- quantile(posterior_samples$mu, probs = c(0.10, 0.90))
-nu_ci_90 <- quantile(posterior_samples$nu, probs = c(0.10, 0.90))
-
-# Add the calculated 90% BCI to the summary table
+# Create a summary table for mu and nu
 summary_table <- data.frame(
   Parameter = c("mu", "nu"),
   Mean = posterior_stats$mean,
   Median = posterior_stats$`50%`,
-  `90% BCI` = c(paste0("[", round(mu_ci_90[1], 3), ", ", round(mu_ci_90[2], 3), "]"),
-                paste0("[", round(nu_ci_90[1], 3), ", ", round(nu_ci_90[2], 3), "]")),
+  `95% BCI` = paste0("[", round(posterior_mu_nu$`2.5%`, 3), ", ", round(posterior_mu_nu$`97.5%`, 3), "]"),
   `Posterior SD` = posterior_stats$sd,
   MCSE = posterior_stats$se_mean,
   `ESS/minute` = posterior_stats$n_eff
