@@ -41,8 +41,8 @@ stan_model <- stan_model(file = "compoisson_model_mu_nu.stan")
 fit <- sampling(
   object = stan_model,
   data = stan_data,
-  iter = 2000,            # Number of iterations
-  warmup = 1000,          # Number of warmup (burn-in) iterations
+  iter = 500,            # Number of iterations
+  warmup = 200,          # Number of warmup (burn-in) iterations
   chains = 4,             # Number of chains
   seed = 123,             # Seed for reproducibility
   control = list(adapt_delta = 0.95, max_treedepth = 15)  # Control parameters
