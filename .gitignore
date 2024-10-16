@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+
+compoisson_model_mu_nu.rds
