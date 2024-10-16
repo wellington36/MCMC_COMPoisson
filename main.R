@@ -2,6 +2,7 @@
 library(rstan)
 library(readr)
 library(dplyr)
+library(ggplot2)
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -50,23 +51,31 @@ fit <- sampling(
 # Print a summary of the results
 print(fit, pars = c("mu", "nu"))
 
-# Trace plots to assess convergence
-traceplot(fit, pars = c("mu", "nu"))
-
-# Posterior distributions
-library(bayesplot)
-mcmc_areas(as.array(fit), pars = c("mu", "nu"))
-
-# Posterior predictive checks
+# Extract generated quantities (predicted frequencies)
 generated_freq <- extract(fit)$freq_rep
 
-# Plot observed vs. replicated frequencies
-observed <- frequencies
+# Get the mean predicted frequency for each count
 replicated <- apply(generated_freq, 2, mean)
 
-plot(counts, observed, pch = 16, col = "blue",
-     xlab = "Count", ylab = "Frequency",
-     main = "Observed vs. Predicted Frequencies")
-points(counts, replicated, pch = 16, col = "red")
-legend("topright", legend = c("Observed", "Predicted"),
-       col = c("blue", "red"), pch = 16)
+# Create a data frame for the plot
+plot_data <- data.frame(
+  count = counts,
+  observed = frequencies,
+  predicted = replicated
+)
+
+# Plot the observed data (bars) and predicted data (line)
+ggplot(plot_data, aes(x = count)) +
+  geom_bar(aes(y = observed), stat = "identity", fill = "blue", alpha = 0.6, width = 0.8) +  # Bars for observed
+  geom_line(aes(y = predicted), color = "red", size = 1.2) +                                # Line for predicted
+  geom_point(aes(y = predicted), color = "red", size = 2) +                                 # Points for predicted
+  labs(
+    title = "Observed vs. Predicted Frequencies",
+    x = "Count",
+    y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "top"
+  )
