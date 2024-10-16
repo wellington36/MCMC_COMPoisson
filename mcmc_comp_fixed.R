@@ -4,6 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 iterations = 500
+FIXED = 100
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -27,7 +28,7 @@ stan_data <- list(
   N = length(counts),
   y = counts,
   freq = frequencies,
-  FIXED = 3300
+  FIXED = FIXED
 )
 
 # Compile the Stan model

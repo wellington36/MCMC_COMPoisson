@@ -27,7 +27,6 @@ transformed parameters {
 
 model {
   vector[N] log_p;          // Log probabilities for each count
-  vector[N] p;               // Probabilities for each count
   // Priors (adjust these based on your knowledge)
   mu ~ gamma(0.1, 0.1);            // Prior for mu
   nu ~ gamma(0.0625, 0.25);        // Prior for nu
@@ -35,7 +34,6 @@ model {
   // Compute log probabilities
   for (i in 1:N) {
     log_p[i] = y[i] * loglamb - nu * lgamma(y[i] + 1) - logZ;
-    //p[i] = exp(log_p[i]);
     target += freq[i] * log_p[i];
   }
 }
