@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 
-compoisson_fixed.rds
+*.rds
+
