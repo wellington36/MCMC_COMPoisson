@@ -3,7 +3,7 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 
-iterations = 5000
+iterations = 500
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -37,6 +37,7 @@ stan_model <- stan_model(file = "compoisson_fixed.stan")
 fit <- sampling(
   object = stan_model,
   data = stan_data,
+  refresh = floor(iterations/5),
   iter = iterations,               # Number of iterations
   warmup = floor(iterations/2),    # Number of warmup (burn-in) iterations
   chains = 4,                      # Number of chains
