@@ -6,7 +6,8 @@ Implementing the Conway-Maxwell Poisson distribution in Stan for mcmc.
 _Image for illustrative purposes only, results NOT guaranteed._
 
 ### Sum-to-threshol appoach
-(in progress...)
+
+![image](https://github.com/user-attachments/assets/aa86b0fd-3874-4851-8318-6599938c2bd7)
 
 ### Bounding pairs approach
 (in progress...)
