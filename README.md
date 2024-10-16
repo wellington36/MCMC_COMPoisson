@@ -10,7 +10,8 @@ _Image for illustrative purposes only, results NOT guaranteed._
 ![image](https://github.com/user-attachments/assets/7ba36ad0-fae2-45a9-9702-6149a68d0e89)
 
 ### Bounding pairs approach
-(in progress...)
+
+![image](https://github.com/user-attachments/assets/ccc4a60e-3ba9-44db-969b-ec6758bac948)
 
 ### Fixed 100 terms
 
