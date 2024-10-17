@@ -7,11 +7,11 @@ _Image for illustrative purposes only, results NOT guaranteed._
 
 ### Sum-to-threshol appoach
 
-![image](https://github.com/user-attachments/assets/af822004-067c-4564-9c60-75335c5abc36)
+![image](https://github.com/user-attachments/assets/8158ac3f-b0fd-49fc-b64c-a6382ae95a2b)
 
 ### Bounding pairs approach
 
-![image](https://github.com/user-attachments/assets/5c281410-4931-4f1c-82e4-9b4d604cd657)
+![image](https://github.com/user-attachments/assets/c33b524f-ac54-4615-9110-9b65cb88ff23)
 
 ### Fixed 100 terms
 
