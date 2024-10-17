@@ -3,7 +3,7 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 
-iterations = 500
+iterations = 5000
 eps = 2**(-52)
 
 # Set rstan options for better performance

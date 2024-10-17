@@ -3,7 +3,7 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 
-iterations = 500
+iterations = 5000
 FIXED = 100
 
 # Set rstan options for better performance
