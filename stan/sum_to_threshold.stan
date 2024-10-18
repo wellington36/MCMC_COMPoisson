@@ -12,6 +12,5 @@ array[] real infiniteSumToThreshold(real loglamb, real nu, real epsilon, int MAX
   }
   
   logZ = log_sum_exp(sort_asc(storeVal[:i]));
-  
   return {logZ, 1. * i};
 }

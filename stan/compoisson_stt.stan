@@ -2,7 +2,6 @@ functions {
   #include sum_to_threshold.stan
 }
 
-// compoisson_model_mu_nu.stan
 data {
   int<lower=1> N;                // Number of unique counts
   array[N] int<lower=0> y;       // Counts (0, 1, 2, ...)

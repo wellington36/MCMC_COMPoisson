@@ -60,9 +60,6 @@ chain_times <- get_elapsed_time(fit)
 # Calculate the average time in minutes across all chains
 avg_time_min <- mean(rowSums(chain_times)) / 60
 
-# Check the column for effective sample size (ESS)
-ess_column <- "n_eff"  # n_eff was identified earlier
-
 # Calculate ESS/minute by dividing n_eff by the average time in minutes
 ess_per_minute <- posterior_stats$n_eff / avg_time_min
 
