@@ -11,7 +11,7 @@ _Image for illustrative purposes only, results NOT guaranteed._
 
 ### Bounding pairs approach
 
-![image](https://github.com/user-attachments/assets/c33b524f-ac54-4615-9110-9b65cb88ff23)
+![image](https://github.com/user-attachments/assets/15c2b9df-df1b-4668-9cf2-e7f5a334c3bf)
 
 ### Fixed 100 terms
 
