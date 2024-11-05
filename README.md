@@ -5,18 +5,18 @@ Implementing the Conway-Maxwell Poisson distribution in Stan for mcmc.
 
 _Image for illustrative purposes only, results NOT guaranteed._
 
-### Sum-to-threshol appoach
+### Sum-to-threshol appoach (by `mcmc_comp_stt.R`)
 
 ![image](https://github.com/user-attachments/assets/8158ac3f-b0fd-49fc-b64c-a6382ae95a2b)
 
-### Bounding pairs approach
+### Bounding pairs approach (by `mcmc_comp_bounding.R`)
 
-![image](https://github.com/user-attachments/assets/c33b524f-ac54-4615-9110-9b65cb88ff23)
+![image](https://github.com/user-attachments/assets/15c2b9df-df1b-4668-9cf2-e7f5a334c3bf)
 
-### Fixed 100 terms
+### Fixed 100 terms (by `mcmc_comp_fixed.R`)
 
 ![image](https://github.com/user-attachments/assets/cfb2d013-c963-4c0a-9e2d-7dcd00a6ce88)
 
-### Fixed 3300 terms
+### Fixed 3300 terms (by `mcmc_comp_fixed.R`)
 
 ![image](https://github.com/user-attachments/assets/5cb24223-0b34-4b6c-abbd-4b3e7f7f8102)
