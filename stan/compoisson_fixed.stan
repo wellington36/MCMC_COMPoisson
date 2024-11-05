@@ -1,4 +1,7 @@
-// compoisson_model_mu_nu.stan
+functions {
+  #include sequential.stan
+}
+
 data {
   int<lower=1> N;                // Number of unique counts
   array[N] int<lower=0> y;       // Counts (0, 1, 2, ...)
@@ -12,17 +15,11 @@ parameters {
 }
 
 transformed parameters {
-  vector[FIXED] Z_terms;
   real logZ;                        // Normalization constant
   real loglamb = nu * log(mu);
+  array[2] real infiniteSequentialApproach = sequential(loglamb, nu, FIXED);
   
-  // Compute normalization constant Z
-  for (i in 1:FIXED) {
-    // Compute (mu^n / n!)^nu
-    Z_terms[i] = (i-1) * loglamb - nu * lgamma(i);
-  }
-  
-  logZ = log_sum_exp(Z_terms);
+  logZ = infiniteSequentialApproach[1];
 }
 
 model {

@@ -64,7 +64,6 @@ avg_time_min <- mean(rowSums(chain_times)) / 60
 ess_per_minute <- posterior_stats$n_eff / avg_time_min
 
 
-
 # Create a summary table for mu and nu
 summary_table <- data.frame(
   Parameter = c("mu", "nu", "n"),
