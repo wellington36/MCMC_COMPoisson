@@ -7,16 +7,17 @@ _Image for illustrative purposes only, results NOT guaranteed._
 
 ### Sum-to-threshol appoach (by `mcmc_comp_stt.R`)
 
-![image](https://github.com/user-attachments/assets/8158ac3f-b0fd-49fc-b64c-a6382ae95a2b)
+![image](https://github.com/user-attachments/assets/3b3f6797-965d-45c0-9d6c-aa0b2d515f7f)
 
 ### Bounding pairs approach (by `mcmc_comp_bounding.R`)
 
-![image](https://github.com/user-attachments/assets/15c2b9df-df1b-4668-9cf2-e7f5a334c3bf)
+![image](https://github.com/user-attachments/assets/be575d9b-1c29-4183-b99e-a0dd3129c712)
+
 
 ### Fixed 100 terms (by `mcmc_comp_fixed.R`)
 
-![image](https://github.com/user-attachments/assets/cfb2d013-c963-4c0a-9e2d-7dcd00a6ce88)
+![image](https://github.com/user-attachments/assets/6c214ca4-e88f-4129-8d79-2cabd019035b)
 
 ### Fixed 3300 terms (by `mcmc_comp_fixed.R`)
 
-![image](https://github.com/user-attachments/assets/5cb24223-0b34-4b6c-abbd-4b3e7f7f8102)
+![image](https://github.com/user-attachments/assets/d7e0f67d-9cb7-4482-a2d9-198a755fa054)
