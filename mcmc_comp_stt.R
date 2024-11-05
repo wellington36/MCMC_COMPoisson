@@ -40,8 +40,8 @@ fit <- sampling(
   object = stan_model,
   data = stan_data,
   refresh = floor(iterations/5),
-  iter = iterations,               # Number of iterations
-  warmup = floor(iterations / 2),    # Number of warmup (burn-in) iterations
+  iter = 2*iterations,               # Number of iterations
+  warmup = iterations,    # Number of warmup (burn-in) iterations
   chains = 4,                      # Number of chains
   control = list(adapt_delta = 0.90, max_treedepth = 12)  # Control parameters
 )
