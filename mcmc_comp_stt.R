@@ -29,7 +29,7 @@ stan_data <- list(
   y = counts,
   freq = frequencies,
   eps = eps,
-  MAX_ITERS = 10**6
+  MAX_ITERS = 10**4
 )
 
 # Compile the Stan model
