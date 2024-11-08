@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 iterations = 5000
-FIXED = 3300
+FIXED = 100
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -42,6 +42,7 @@ fit <- sampling(
   iter = 2*iterations,               # Number of iterations
   warmup = iterations,    # Number of warmup (burn-in) iterations
   chains = 4,                      # Number of chains
+  cores = 8,
   control = list(adapt_delta = 0.90, max_treedepth = 12)  # Control parameters
 )
 
