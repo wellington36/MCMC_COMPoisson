@@ -11,7 +11,9 @@ _Image for illustrative purposes only, I don't remember where is the code that g
 
 ### Bounding pairs approach (by `mcmc_comp_bounding.R`)
 
-![image](https://github.com/user-attachments/assets/be575d9b-1c29-4183-b99e-a0dd3129c712)
+![image](https://github.com/user-attachments/assets/c3f7c966-3569-445c-ad31-972d5e57c846)
+
+
 
 
 ### Fixed 100 terms (by `mcmc_comp_fixed.R`)
