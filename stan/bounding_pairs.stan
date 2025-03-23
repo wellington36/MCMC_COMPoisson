@@ -12,7 +12,7 @@ array[] real infiniteBoundingPairs(real loglamb, real nu, real epsilon, int MAX_
   i+=1;
   storeVal[i] = logFunction(loglamb, nu, i);
   
-  while (storeVal[i] >= storeVal[i-1] || (storeVal[i] - log(-expm1(storeVal[i] - storeVal[i-1])) >= leps) && (i < MAX_ITERS)) {
+  while ((storeVal[i] >= storeVal[i-1] || (storeVal[i] - log(-expm1(storeVal[i] - storeVal[i-1])) >= leps)) && (i < MAX_ITERS)) {
     i+=1;
     storeVal[i] = logFunction(loglamb, nu, i);
   }
