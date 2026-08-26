@@ -86,3 +86,43 @@ library(kableExtra)
 summary_table %>%
   kable("html", col.names = c("Parameter", "Mean", "Median", "95% BCI", "Posterior SD", "MCSE", "ESS/minute")) %>%
   kable_styling(full_width = F, bootstrap_options = c("striped", "hover"))
+
+library(bayesplot)
+
+# --- 1. Trace plots: did chains mix? ---
+print(traceplot(fit, pars = c("mu", "phi")))
+
+# --- 2. Extract posterior draws ---
+post <- rstan::extract(fit, pars = c("mu", "phi"))
+mu_hat  <- mean(post$mu)
+phi_hat <- mean(post$phi)
+
+# --- 3. Compute fitted (predicted) probabilities at posterior mean ---
+y_max <- max(data_df$count)
+logFunction_r <- function(mu, phi, n) {
+  -n + n*log(n) - lgamma(n + 1) + phi*n + phi*n*log(mu) - phi*n*log(n)
+}
+log_terms <- sapply(0:y_max, function(n) {
+  if (n == 0) return(0)
+  logFunction_r(mu_hat, phi_hat, n)
+})
+logZ_hat <- log(sum(exp(log_terms - max(log_terms)))) + max(log_terms)  # stable log-sum-exp
+probs <- exp(log_terms - logZ_hat)
+
+total_n <- sum(data_df$frequency)
+fitted_df <- data.frame(
+  count = 0:y_max,
+  fitted = probs * total_n
+)
+
+# --- 4. Overlay observed vs fitted counts ---
+plot_df <- merge(data_df, fitted_df, by = "count", all = TRUE)
+plot_df[is.na(plot_df)] <- 0
+
+ggplot(plot_df, aes(x = count)) +
+  geom_col(aes(y = frequency), fill = "steelblue", alpha = 0.6) +
+  geom_point(aes(y = fitted), color = "firebrick", size = 2) +
+  geom_line(aes(y = fitted), color = "firebrick") +
+  labs(title = "Observed (bars) vs Fitted (red) frequencies",
+       x = "Count", y = "Frequency") +
+  theme_minimal()
