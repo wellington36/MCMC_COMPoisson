@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 
 iterations = 5000
-FIXED = 100
+FIXED = 3300
 
 # Set rstan options for better performance
 rstan_options(auto_write = TRUE)
@@ -47,9 +47,9 @@ fit <- sampling(
 )
 
 # Print a summary of the results
-print(fit, pars = c("mu", "nu"))
+print(fit, pars = c("mu", "phi"))
 
-summary_fit <- summary(fit, pars = c("mu", "nu"))
+summary_fit <- summary(fit, pars = c("mu", "phi"))
 
 # Convert the summary output to a data frame
 posterior_stats <- as.data.frame(summary_fit$summary)
@@ -65,7 +65,7 @@ ess_per_minute <- posterior_stats$n_eff / avg_time_min
 
 # Create a summary table for mu and nu
 summary_table <- data.frame(
-  Parameter = c("mu", "nu"),
+  Parameter = c("mu", "phi"),
   Mean = posterior_stats$mean,
   Median = posterior_stats$`50%`,
   `95% BCI` = paste0("[", round(posterior_stats$`2.5%`, 3), ", ", round(posterior_stats$`97.5%`, 3), "]"),
@@ -84,3 +84,43 @@ library(kableExtra)
 summary_table %>%
   kable("html", col.names = c("Parameter", "Mean", "Median", "95% BCI", "Posterior SD", "MCSE", "ESS/minute")) %>%
   kable_styling(full_width = F, bootstrap_options = c("striped", "hover"))
+
+library(bayesplot)
+
+# --- 1. Trace plots: did chains mix? ---
+print(traceplot(fit, pars = c("mu", "phi")))
+
+# --- 2. Extract posterior draws ---
+post <- rstan::extract(fit, pars = c("mu", "phi"))
+mu_hat  <- mean(post$mu)
+phi_hat <- mean(post$phi)
+
+# --- 3. Compute fitted (predicted) probabilities at posterior mean ---
+y_max <- max(data_df$count)
+logFunction_r <- function(mu, phi, n) {
+  -n + n*log(n) - lgamma(n + 1) + phi*n + phi*n*log(mu) - phi*n*log(n)
+}
+log_terms <- sapply(0:y_max, function(n) {
+  if (n == 0) return(0)
+  logFunction_r(mu_hat, phi_hat, n)
+})
+logZ_hat <- log(sum(exp(log_terms - max(log_terms)))) + max(log_terms)  # stable log-sum-exp
+probs <- exp(log_terms - logZ_hat)
+
+total_n <- sum(data_df$frequency)
+fitted_df <- data.frame(
+  count = 0:y_max,
+  fitted = probs * total_n
+)
+
+# --- 4. Overlay observed vs fitted counts ---
+plot_df <- merge(data_df, fitted_df, by = "count", all = TRUE)
+plot_df[is.na(plot_df)] <- 0
+
+ggplot(plot_df, aes(x = count)) +
+  geom_col(aes(y = frequency), fill = "steelblue", alpha = 0.6) +
+  geom_point(aes(y = fitted), color = "firebrick", size = 2) +
+  geom_line(aes(y = fitted), color = "firebrick") +
+  labs(title = "Observed (bars) vs Fitted (red) frequencies",
+       x = "Count", y = "Frequency") +
+  theme_minimal()

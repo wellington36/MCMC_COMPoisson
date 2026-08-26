@@ -12,13 +12,12 @@ data {
 
 parameters {
   real mu;              // Mean parameter (mu)
-  real<lower=0> nu;              // Dispersion parameter (nu)
+  real<lower=0> phi;              // Dispersion parameter (phi)
 }
 
 transformed parameters {
   real logZ;                        // Normalization constant
-  real loglamb = nu * log(mu);
-  array[2] real infiniteBPApproach = infiniteBoundingPairs(loglamb, nu, eps, MAX_ITERS);
+  array[2] real infiniteBPApproach = infiniteBoundingPairs(mu, phi, eps, MAX_ITERS);
   
   logZ = infiniteBPApproach[1];
 }
@@ -26,13 +25,12 @@ transformed parameters {
 model {
   vector[N] log_p;          // Log probabilities for each count
   // Priors (adjust these based on your knowledge)
-  mu ~ gamma(1, 1);            // Prior for mu
-  nu ~ gamma(0.0625, 0.25);        // Prior for nu
-  //nu ~ normal(0, 1);               // Prior for nu
+  mu ~ normal(0, 5);            // Prior for mu
+  phi ~ uniform(0, 10);        // Prior for phi
   
   // Compute log probabilities
   for (j in 1:N) {
-    log_p[j] = y[j] * loglamb - nu * lgamma(y[j] + 1) - logZ;
+    log_p[j] = log_kernel(mu, phi, y[j]) - logZ;
     target += freq[j] * log_p[j];
   }
 }

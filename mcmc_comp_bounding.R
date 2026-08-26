@@ -48,9 +48,9 @@ fit <- sampling(
 )
 
 # Print a summary of the results
-print(fit, pars = c("mu", "nu", "n"))
+print(fit, pars = c("mu", "phi", "n"))
 
-summary_fit <- summary(fit, pars = c("mu", "nu", "n"))
+summary_fit <- summary(fit, pars = c("mu", "phi", "n"))
 
 # Convert the summary output to a data frame
 posterior_stats <- as.data.frame(summary_fit$summary)
@@ -65,9 +65,9 @@ avg_time_min <- mean(rowSums(chain_times)) / 60
 ess_per_minute <- posterior_stats$n_eff / avg_time_min
 
 
-# Create a summary table for mu and nu
+# Create a summary table for mu and phi
 summary_table <- data.frame(
-  Parameter = c("mu", "nu", "n"),
+  Parameter = c("mu", "phi", "n"),
   Mean = posterior_stats$mean,
   Median = posterior_stats$`50%`,
   `95% BCI` = paste0("[", round(posterior_stats$`2.5%`, 3), ", ", round(posterior_stats$`97.5%`, 3), "]"),

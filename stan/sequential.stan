@@ -1,19 +1,22 @@
-real logFunction(real loglamb, real nu, int n) {
-  return (n - 1) * loglamb - nu * lgamma(n);
+real log_kernel(real mu, real phi, int n) {
+  if (n == 0)
+    return 0;
+
+  return -n
+         + n * log(n)
+         - lgamma(n + 1)
+         + phi * n
+         + phi * n * log(mu)
+         - phi * n * log(n);
 }
 
-array[] real sequential(real loglamb, real nu, int MAX_ITERS) {
-  vector[MAX_ITERS] storeVal;
-  real logZ;
-  int i = 1;
-  
-  storeVal[1] = - nu * lgamma(1);
-  
-  while (i < MAX_ITERS) {
-    i+=1;
-    storeVal[i] = logFunction(loglamb, nu, i);
-  }
-  
-  logZ = log_sum_exp(sort_asc(storeVal[:i]));
-  return {logZ, 1. * i};
+real sequential(real mu, real phi, int max_iters) {
+  vector[max_iters + 1] log_terms;
+
+  log_terms[1] = 0;  // n = 0
+
+  for (n in 1:max_iters)
+    log_terms[n + 1] = log_kernel(mu, phi, n);
+
+  return log_sum_exp(log_terms);
 }
