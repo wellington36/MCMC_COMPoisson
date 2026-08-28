@@ -17,7 +17,7 @@ parameters {
 
 transformed parameters {
   real logZ;                        // Normalization constant
-  array[2] real infiniteSTTApproach = infiniteSumToThreshold(mu, phi, eps, MAX_ITERS);
+  array[2] real infiniteSTTApproach = infiniteSumToThreshold(mu, phi, 0, eps, MAX_ITERS, 0);
   
   logZ = infiniteSTTApproach[1];
 }
